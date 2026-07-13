@@ -1,0 +1,8 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.gemini/
+database.db
+.DS_Store
+Thumbs.db

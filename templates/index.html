@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depósito Inteligente - Control de Stock</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dark-theme"> <!-- Default to dark mode for premium look -->
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            <h2>Depósito <span>Pro</span></h2>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <a href="#dashboard" class="menu-item active" id="nav-dashboard">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#inventario" class="menu-item" id="nav-inventario">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path><link rel="stylesheet" href=""/></svg>
+                <span>Inventario</span>
+            </a>
+            <a href="#movimientos" class="menu-item" id="nav-movimientos">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L20.2 3.8M20 16v5h-5M4 4l16.2 16.2"/></svg>
+                <span>Entrada / Salida</span>
+            </a>
+            <a href="#historial" class="menu-item" id="nav-historial">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>Historial</span>
+            </a>
+            <a href="#reportes" class="menu-item" id="nav-reportes">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>Reportes</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button class="theme-toggle-btn" id="theme-toggle" aria-label="Cambiar tema" style="margin-bottom: 8px;">
+                <span class="sun-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </span>
+                <span class="moon-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </span>
+                <span class="theme-toggle-text">Modo Claro</span>
+            </button>
+            <button class="theme-toggle-btn" id="btn-logout" aria-label="Cerrar sesión" style="border-color: rgba(244, 63, 94, 0.2); color: var(--color-rose-500);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-title">
+                <h1 id="page-title">Dashboard</h1>
+                <p id="page-subtitle">Información general del depósito</p>
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar">AD</div>
+                <div class="user-info">
+                    <span class="user-name" id="user-display-name">Administrador</span>
+                    <button class="btn-link" id="btn-open-change-pw" style="background: none; border: none; padding: 0; color: var(--color-indigo-500); cursor: pointer; text-align: left; font-size: 0.8rem; font-weight: 500; text-decoration: underline; outline: none;">Cambiar contraseña</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Page Sections -->
+        
+        <!-- SECTION: DASHBOARD -->
+        <section id="section-dashboard" class="page-section active">
+            <!-- Summary KPI Grid -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon fill-indigo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                    </div>
+                    <div class="kpi-details">
+                        <span class="kpi-label">Productos Registrados</span>
+                        <h3 class="kpi-value" id="kpi-total-products">0</h3>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon fill-emerald">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </div>
+                    <div class="kpi-details">
+                        <span class="kpi-label">Stock Total</span>
+                        <h3 class="kpi-value" id="kpi-total-stock">0</h3>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon fill-amber">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </div>
+                    <div class="kpi-details">
+                        <span class="kpi-label">Bajo Stock / Sin Stock</span>
+                        <h3 class="kpi-value" id="kpi-low-stock">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Double Column layout for dashboard details -->
+            <div class="dashboard-details">
+                <!-- Alerts / low stock panel -->
+                <div class="dashboard-panel card-panel">
+                    <div class="panel-header">
+                        <h3>Alertas de Stock Crítico</h3>
+                        <span class="badge badge-alert" id="low-stock-count-badge">0</span>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="alert-list" id="dashboard-low-stock-list">
+                            <!-- Populated by JS -->
+                            <li class="empty-state">No hay alertas de stock bajo. ¡Buen trabajo!</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Recent transactions panel -->
+                <div class="dashboard-panel card-panel">
+                    <div class="panel-header">
+                        <h3>Actividad Reciente</h3>
+                        <a href="#historial" class="panel-link" onclick="switchTab('historial')">Ver historial completo</a>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="activity-list" id="dashboard-recent-activity">
+                            <!-- Populated by JS -->
+                            <li class="empty-state">No se registran movimientos recientes.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: INVENTARIO -->
+        <section id="section-inventario" class="page-section">
+            <div class="table-actions">
+                <div class="search-box-container">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="inventory-search" placeholder="Buscar por ID o Nombre del producto...">
+                </div>
+                <div class="filter-container">
+                    <select id="inventory-category-filter">
+                        <option value="">Todas las categorías</option>
+                        <!-- Categories dynamically loaded -->
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-icon" id="btn-open-add-product">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Nuevo Producto</span>
+                </button>
+            </div>
+
+            <div class="table-container card-panel">
+                <table class="data-table" id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">ID</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th style="text-align: right; width: 120px;">Stock</th>
+                            <th style="text-align: right; width: 120px;">Stock Mínimo</th>
+                            <th style="text-align: center; width: 150px;">Estado</th>
+                            <th style="text-align: center; width: 110px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION: MOVIMIENTOS -->
+        <section id="section-movimientos" class="page-section">
+            <div class="grid-form-layout">
+                <!-- Transaction Form Card -->
+                <div class="card-panel form-card">
+                    <div class="card-header">
+                        <h2>Registrar Entrada o Salida</h2>
+                        <p>Carga ingresos al depósito o entregas a las diferentes áreas de trabajo</p>
+                    </div>
+                    <form id="transaction-form" class="transaction-form">
+                        
+                        <!-- Toggle transaction type -->
+                        <div class="form-group">
+                            <label>Tipo de Operación</label>
+                            <div class="operation-type-toggle">
+                                <label class="toggle-option active">
+                                    <input type="radio" name="trans-type" value="entrada" checked>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    <span>Entrada (Ingreso)</span>
+                                </label>
+                                <label class="toggle-option">
+                                    <input type="radio" name="trans-type" value="salida">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    <span>Salida (Entrega a Área)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Product Selection with Search -->
+                        <div class="form-group relative">
+                            <label for="trans-product-search">Seleccionar Producto</label>
+                            <div class="search-box-container">
+                                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <input type="text" id="trans-product-search" placeholder="Escribe el nombre o ID del producto..." autocomplete="off">
+                            </div>
+                            <input type="hidden" id="trans-product-id" name="producto_id">
+                            
+                            <!-- Dropdown for autocomplete results -->
+                            <div class="autocomplete-dropdown" id="trans-autocomplete-list">
+                                <!-- Results populated dynamically -->
+                            </div>
+                            <span class="input-helper-text" id="selected-product-stock-preview"></span>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="form-group">
+                            <label for="trans-quantity">Cantidad</label>
+                            <input type="number" id="trans-quantity" name="cantidad" min="1" placeholder="Ej. 10" required>
+                        </div>
+
+                        <!-- Target Area (Conditional) -->
+                        <div class="form-group hidden" id="target-area-group">
+                            <label for="trans-area">Área de Trabajo de Destino</label>
+                            <input type="text" id="trans-area" name="area_destino" placeholder="Escribe el área (ej. Mantenimiento, Sistemas)..." list="areas-datalist" autocomplete="off">
+                            <datalist id="areas-datalist">
+                                <!-- Dynamically populated -->
+                            </datalist>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-block">Registrar Movimiento</button>
+                    </form>
+                </div>
+
+                <!-- Info side Card -->
+                <div class="card-panel info-card fill-gradient">
+                    <h3>Registro Inteligente</h3>
+                    <p>Las salidas de stock requieren indicar obligatoriamente el área de destino. Esto permite generar reportes detallados de consumo por sector de trabajo.</p>
+                    <div class="info-features">
+                        <div class="info-feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">Autocompletado inteligente de productos y áreas registradas previamente.</div>
+                        </div>
+                        <div class="info-feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">Validación automática para evitar egresos superiores al stock disponible.</div>
+                        </div>
+                        <div class="info-feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">Monitoreo de umbral mínimo de stock tras cada movimiento.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: HISTORIAL -->
+        <section id="section-historial" class="page-section">
+            <div class="table-actions">
+                <div class="search-box-container">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="history-search" placeholder="Filtrar por nombre de producto o área...">
+                </div>
+                <div class="filter-container">
+                    <select id="history-type-filter">
+                        <option value="">Todos los movimientos</option>
+                        <option value="entrada">Entradas</option>
+                        <option value="salida">Salidas (Despachos)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container card-panel">
+                <table class="data-table" id="history-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Trans. ID</th>
+                            <th style="width: 80px;">Prod. ID</th>
+                            <th>Producto</th>
+                            <th style="width: 100px; text-align: center;">Operación</th>
+                            <th style="width: 100px; text-align: right;">Cantidad</th>
+                            <th>Área Destino</th>
+                            <th style="width: 180px;">Fecha y Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION: REPORTES -->
+        <section id="section-reportes" class="page-section">
+            <div class="report-cards-grid">
+                <!-- PDF Report Card -->
+                <div class="card-panel report-card hover-glow">
+                    <div class="report-header">
+                        <div class="report-icon bg-pdf">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <h3>Reporte Ejecutivo en PDF</h3>
+                    </div>
+                    <p>Genera un documento formateado no-editable de alta calidad para presentación ejecutiva o impresión física del estado actual de stock y el registro de los últimos 30 movimientos.</p>
+                    <div class="report-badge">Listo para imprimir</div>
+                    <a href="/api/reportes/pdf" class="btn btn-pdf btn-block">Descargar PDF</a>
+                </div>
+
+                <!-- Excel Report Card -->
+                <div class="card-panel report-card hover-glow">
+                    <div class="report-header">
+                        <div class="report-icon bg-excel">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <h3>Hoja de Cálculo Excel</h3>
+                    </div>
+                    <p>Obtén una planilla de cálculo interactiva y editable (.xlsx) con dos pestañas organizadas ("Stock Actual" y "Movimientos Completos"). Ideal para auditorías y análisis avanzados.</p>
+                    <div class="report-badge text-emerald">Editable y dinámico</div>
+                    <a href="/api/reportes/excel" class="btn btn-excel btn-block">Descargar Excel</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL: NUEVO PRODUCTO -->
+    <div class="modal-backdrop" id="add-product-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Añadir Nuevo Producto</h2>
+                <button class="modal-close" id="btn-close-add-product">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-product-form">
+                    <div class="form-group">
+                        <label for="prod-name">Nombre del Producto *</label>
+                        <input type="text" id="prod-name" name="nombre" placeholder="Ej. Linterna LED recargable" required autocomplete="off">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="prod-category">Categoría *</label>
+                            <input type="text" id="prod-category" name="categoria" placeholder="Ej. Herramientas, EPP" list="categories-datalist" required autocomplete="off">
+                            <datalist id="categories-datalist">
+                                <!-- Populated dynamically -->
+                            </datalist>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="prod-qty">Cantidad Inicial (Ingreso) *</label>
+                            <input type="number" id="prod-qty" name="cantidad_inicial" min="0" value="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-min">Umbral de Stock Mínimo *</label>
+                            <input type="number" id="prod-min" name="stock_minimo" min="0" value="5" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Registrar en Inventario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL: CAMBIAR CONTRASEÑA -->
+    <div class="modal-backdrop" id="change-pw-modal">
+        <div class="modal-card" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Cambiar Contraseña</h2>
+                <button class="modal-close" id="btn-close-change-pw">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="change-pw-form">
+                    <div class="form-group">
+                        <label for="pw-actual">Contraseña Actual *</label>
+                        <input type="password" id="pw-actual" name="password_actual" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pw-nuevo">Nueva Contraseña *</label>
+                        <input type="password" id="pw-nuevo" name="password_nuevo" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Guardar Contraseña</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Application Script -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

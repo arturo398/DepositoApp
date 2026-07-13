@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Depósito Inteligente</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="login-body dark-theme">
+    
+    <div class="login-wrapper">
+        <div class="login-card card-panel hover-glow">
+            
+            <div class="login-header">
+                <svg class="login-logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <h2>Depósito <span>Pro</span></h2>
+                <p>Ingresa tus credenciales para acceder al sistema</p>
+            </div>
+            
+            <!-- Error message container -->
+            <div class="login-error-box hidden" id="login-error-msg">
+                <span>Credenciales incorrectas. Intenta de nuevo.</span>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="login-username">Usuario</label>
+                    <input type="text" id="login-username" name="usuario" placeholder="Nombre de usuario" required autocomplete="username" autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">Iniciar Sesión</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Credenciales de primer ingreso:</p>
+                <code style="display: block; margin-top: 4px; color: var(--color-indigo-500); font-weight: 600;">Usuario: admin | Clave: admin123</code>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // Init theme from localStorage
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.remove('dark-theme');
+            document.body.classList.add('light-theme');
+        } else {
+            document.body.classList.remove('light-theme');
+            document.body.classList.add('dark-theme');
+        }
+
+        const loginForm = document.getElementById('login-form');
+        const errorBox = document.getElementById('login-error-msg');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorBox.classList.add('hidden');
+            
+            const usuario = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Redirect to dashboard
+                    window.location.href = '/';
+                } else {
+                    // Show error message
+                    errorBox.textContent = result.error || 'Usuario o contraseña incorrectos.';
+                    errorBox.classList.remove('hidden');
+                    document.getElementById('login-password').value = '';
+                    document.getElementById('login-password').focus();
+                }
+            } catch (err) {
+                errorBox.textContent = 'Error de conexión con el servidor.';
+                errorBox.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
