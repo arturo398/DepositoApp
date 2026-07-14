@@ -27,7 +27,14 @@ app = Flask(
 app.secret_key = os.environ.get('SECRET_KEY') or 'deposito-secreto-key-local-12345'
 
 # Initialize database
-init_db()
+try:
+    init_db()
+except Exception as e:
+    import sys
+    import traceback
+    sys.stderr.write(f"CRITICAL ERROR during init_db(): {e}\n")
+    traceback.print_exc(file=sys.stderr)
+
 
 @app.before_request
 def check_login():

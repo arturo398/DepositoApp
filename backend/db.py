@@ -2,7 +2,10 @@ import sqlite3
 import os
 
 # Permite configurar una ruta externa persistente para la base de datos en servidores de produccion
-DATABASE_PATH = os.environ.get('DB_PATH') or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'database.db')
+if os.environ.get('VERCEL'):
+    DATABASE_PATH = os.environ.get('DB_PATH') or '/tmp/database.db'
+else:
+    DATABASE_PATH = os.environ.get('DB_PATH') or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'database.db')
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE_PATH)

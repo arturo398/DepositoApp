@@ -102,3 +102,33 @@ pip install -r deposito-stock/requirements.txt
 4. Regresa a la pestaña **Web** y haz clic en el botón verde **Reload** (Recargar).
 
 Tu aplicación estará disponible en la dirección: `http://TU_USUARIO.pythonanywhere.com`.
+
+---
+
+## Opción C: Despliegue en Vercel (Rápido y Moderno - Base de Datos Temporal)
+Vercel es una excelente opción para publicar la aplicación de forma rápida y gratuita. Sin embargo, su infraestructura serverless utiliza un sistema de archivos de solo lectura y las funciones se apagan por inactividad.
+
+> [!WARNING]
+> **Base de Datos Efímera:**
+> Por defecto, la base de datos SQLite se creará en la carpeta temporal (`/tmp/database.db`). Esto significa que cada vez que la función serverless de Vercel se reinicie (lo cual ocurre frecuentemente por inactividad), **se perderán todos los productos y movimientos registrados**.
+>
+> **Solución para Producción:**
+> Si deseas usar Vercel con datos persistentes, debes conectar una base de datos externa en la nube (como PostgreSQL en Neon.tech, Supabase o Render PostgreSQL) y modificar el adaptador de la base de datos en el código para que apunte a ella.
+
+### Paso 1: Configurar el proyecto
+Asegúrate de que los archivos `vercel.json` y `requirements.txt` estén presentes en la raíz de tu proyecto. El archivo `vercel.json` ya ha sido configurado para que Vercel sepa cómo ejecutar la aplicación Flask usando `@vercel/python`.
+
+### Paso 2: Subir el proyecto a GitHub
+Si no lo has hecho aún, inicializa Git y sube tu proyecto a un repositorio de GitHub como se describe en el **Paso 1 de la Opción A**.
+
+### Paso 3: Crear el proyecto en Vercel
+1. Regístrate o inicia sesión en [Vercel.com](https://vercel.com/) (preferentemente con tu cuenta de GitHub).
+2. En tu Dashboard principal, haz clic en **Add New...** y selecciona **Project**.
+3. Importa tu repositorio `deposito-stock` desde la lista de repositorios conectados de GitHub.
+4. En la configuración del proyecto:
+   * **Framework Preset**: Déjalo en `Other`.
+   * **Root Directory**: `./` (directorio raíz).
+   * **Build and Development Settings**: No es necesario modificar nada.
+5. Haz clic en **Deploy**.
+
+¡Eso es todo! Vercel compilará la aplicación en unos segundos y te entregará una URL pública (ej. `https://deposito-stock.vercel.app`) para acceder desde cualquier dispositivo.
