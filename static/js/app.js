@@ -60,6 +60,20 @@ const elements = {
     historyTypeFilter: document.getElementById('history-type-filter'),
     historyTableBody: document.getElementById('history-table-body'),
     
+    // Report Filters
+    repFilterProduct: document.getElementById('rep-filter-product'),
+    repFilterArea: document.getElementById('rep-filter-area'),
+    repFilterType: document.getElementById('rep-filter-type'),
+    repFilterDateStart: document.getElementById('rep-filter-date-start'),
+    repFilterDateEnd: document.getElementById('rep-filter-date-end'),
+    btnClearRepFilters: document.getElementById('btn-clear-rep-filters'),
+    btnStockPdf: document.getElementById('btn-download-stock-pdf'),
+    btnStockExcel: document.getElementById('btn-download-stock-excel'),
+    btnMovsPdf: document.getElementById('btn-download-movs-pdf'),
+    btnMovsExcel: document.getElementById('btn-download-movs-excel'),
+    btnRefreshInventory: document.getElementById('btn-refresh-inventory'),
+    btnRefreshHistory: document.getElementById('btn-refresh-history'),
+    
     // Toast Container
     toastContainer: document.getElementById('toast-container')
 };
@@ -249,13 +263,12 @@ function setupEventListeners() {
         });
     });
 
-    // Autocomplete Product Search in Transactions
-    let autocompleteDebounce;
+    // Autocomplete Product Search in Transactions (optimized to run 100% locally from client-side cache)
     elements.transProductSearch.addEventListener('input', (e) => {
-        const val = e.target.value;
+        const val = e.target.value.trim().toLowerCase();
         
         // Reset selected product if they edit search
-        if (state.selectedProduct && val !== state.selectedProduct.nombre) {
+        if (state.selectedProduct && e.target.value !== state.selectedProduct.nombre) {
             resetSelectedProduct();
         }
 
@@ -264,17 +277,50 @@ function setupEventListeners() {
             return;
         }
 
-        clearTimeout(autocompleteDebounce);
-        autocompleteDebounce = setTimeout(async () => {
-            try {
-                const response = await fetch(`/api/productos?q=${encodeURIComponent(val)}`);
-                const matches = await response.json();
-                renderAutocompleteDropdown(matches);
-            } catch (err) {
-                console.error(err);
-            }
-        }, 150);
+        // Filter local products list instantaneously
+        const matches = state.productos.filter(p => 
+            p.nombre.toLowerCase().includes(val) || 
+            p.id.toString() === val
+        );
+        renderAutocompleteDropdown(matches);
     });
+
+    // Refresh Inventory List Button
+    if (elements.btnRefreshInventory) {
+        elements.btnRefreshInventory.addEventListener('click', async () => {
+            try {
+                const btn = elements.btnRefreshInventory;
+                btn.style.opacity = '0.7';
+                btn.querySelector('span').textContent = 'Cargando...';
+                await fetchProducts();
+                await fetchCategories();
+                renderInventoryTable();
+                btn.style.opacity = '1';
+                btn.querySelector('span').textContent = 'Actualizar';
+                showToast('Inventario de stock sincronizado', 'success');
+            } catch (err) {
+                showToast('Error al actualizar inventario', 'error');
+            }
+        });
+    }
+
+    // Refresh History List Button
+    if (elements.btnRefreshHistory) {
+        elements.btnRefreshHistory.addEventListener('click', async () => {
+            try {
+                const btn = elements.btnRefreshHistory;
+                btn.style.opacity = '0.7';
+                btn.querySelector('span').textContent = 'Cargando...';
+                await fetchTransactions();
+                renderHistoryTable();
+                btn.style.opacity = '1';
+                btn.querySelector('span').textContent = 'Actualizar';
+                showToast('Historial de movimientos sincronizado', 'success');
+            } catch (err) {
+                showToast('Error al actualizar historial', 'error');
+            }
+        });
+    }
 
     // Close autocomplete when clicking outside
     document.addEventListener('click', (e) => {
@@ -351,6 +397,75 @@ function setupEventListeners() {
             }
         });
     }
+
+    // Intercept Report Downloads to add query parameters and separate stock / movements
+    if (elements.btnStockPdf) {
+        elements.btnStockPdf.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = `/api/reportes/pdf?tipo=stock`;
+        });
+    }
+
+    if (elements.btnStockExcel) {
+        elements.btnStockExcel.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = `/api/reportes/excel?tipo=stock`;
+        });
+    }
+
+    if (elements.btnMovsPdf) {
+        elements.btnMovsPdf.addEventListener('click', (e) => {
+            e.preventDefault();
+            const prodId = elements.repFilterProduct.value;
+            const area = elements.repFilterArea.value;
+            const movType = elements.repFilterType.value;
+            const dateStart = elements.repFilterDateStart.value;
+            const dateEnd = elements.repFilterDateEnd.value;
+            
+            const params = new URLSearchParams();
+            params.append('tipo', 'movimientos');
+            if (prodId) params.append('producto_id', prodId);
+            if (area) params.append('area', area);
+            if (movType) params.append('tipo_movimiento', movType);
+            if (dateStart) params.append('fecha_inicio', dateStart);
+            if (dateEnd) params.append('fecha_fin', dateEnd);
+            
+            window.location.href = `/api/reportes/pdf?${params.toString()}`;
+        });
+    }
+
+    if (elements.btnMovsExcel) {
+        elements.btnMovsExcel.addEventListener('click', (e) => {
+            e.preventDefault();
+            const prodId = elements.repFilterProduct.value;
+            const area = elements.repFilterArea.value;
+            const movType = elements.repFilterType.value;
+            const dateStart = elements.repFilterDateStart.value;
+            const dateEnd = elements.repFilterDateEnd.value;
+            
+            const params = new URLSearchParams();
+            params.append('tipo', 'movimientos');
+            if (prodId) params.append('producto_id', prodId);
+            if (area) params.append('area', area);
+            if (movType) params.append('tipo_movimiento', movType);
+            if (dateStart) params.append('fecha_inicio', dateStart);
+            if (dateEnd) params.append('fecha_fin', dateEnd);
+            
+            window.location.href = `/api/reportes/excel?${params.toString()}`;
+        });
+    }
+
+    // Clear Report Filters
+    if (elements.btnClearRepFilters) {
+        elements.btnClearRepFilters.addEventListener('click', () => {
+            elements.repFilterProduct.value = '';
+            elements.repFilterArea.value = '';
+            elements.repFilterType.value = '';
+            elements.repFilterDateStart.value = '';
+            elements.repFilterDateEnd.value = '';
+            showToast('Filtros de reporte limpiados', 'success');
+        });
+    }
 }
 
 // --- DATA FETCHING & APP LOADING ---
@@ -362,6 +477,7 @@ async function loadAppData() {
             fetchAreas(),
             fetchTransactions()
         ]);
+        populateReportFilters();
         
         // Fetch session status to show correct user name
         try {
@@ -388,6 +504,7 @@ async function fetchProducts() {
     const response = await fetch('/api/productos');
     state.productos = await response.json();
     updateDatalists();
+    populateReportFilters();
 }
 
 async function fetchCategories() {
@@ -400,6 +517,7 @@ async function fetchAreas() {
     const response = await fetch('/api/areas');
     state.areas = await response.json();
     populateAreasDatalist();
+    populateReportFilters();
 }
 
 async function fetchTransactions() {
@@ -438,6 +556,32 @@ function populateAreasDatalist() {
     });
 }
 
+function populateReportFilters() {
+    if (!elements.repFilterProduct || !elements.repFilterArea) return;
+    
+    // Populate Products
+    const prodVal = elements.repFilterProduct.value;
+    elements.repFilterProduct.innerHTML = '<option value="">Todos los productos</option>';
+    state.productos.forEach(prod => {
+        const option = document.createElement('option');
+        option.value = prod.id;
+        option.textContent = `[ID ${prod.id}] ${prod.nombre}`;
+        elements.repFilterProduct.appendChild(option);
+    });
+    elements.repFilterProduct.value = prodVal;
+
+    // Populate Areas
+    const areaVal = elements.repFilterArea.value;
+    elements.repFilterArea.innerHTML = '<option value="">Todas las áreas</option>';
+    state.areas.forEach(area => {
+        const option = document.createElement('option');
+        option.value = area;
+        option.textContent = area;
+        elements.repFilterArea.appendChild(option);
+    });
+    elements.repFilterArea.value = areaVal;
+}
+
 function updateDatalists() {
     // Dynamic updates if needed, e.g. for products autocompletes
 }
@@ -452,7 +596,7 @@ function renderAutocompleteDropdown(matches) {
             const div = document.createElement('div');
             div.className = 'autocomplete-item';
             div.innerHTML = `
-                <span class="autocomplete-item-name">${item.nombre} (ID: ${item.id})</span>
+                <span class="autocomplete-item-name">${item.nombre} </span>
                 <span class="autocomplete-item-category">Stock: ${item.cantidad} • ${item.categoria}</span>
             `;
             div.addEventListener('click', () => {

@@ -131,4 +131,63 @@ Si no lo has hecho aún, inicializa Git y sube tu proyecto a un repositorio de G
    * **Build and Development Settings**: No es necesario modificar nada.
 5. Haz clic en **Deploy**.
 
+---
+
+## Opción D: Conectar Base de Datos Relacional en la Nube (Supabase PostgreSQL)
+Supabase te ofrece una base de datos PostgreSQL robusta y gratuita en la nube. Es la solución ideal para conectar a servicios como **Vercel** (evitando perder tus datos al reiniciarse la app) o para desarrollo local con almacenamiento remoto.
+
+### Paso 1: Crear el proyecto en Supabase
+1. Entra a [Supabase.com](https://supabase.com/) y regístrate con tu correo o cuenta de GitHub.
+2. En el panel principal, haz clic en **New Project** (Nuevo proyecto).
+3. Selecciona tu organización por defecto y rellena los datos del proyecto:
+   * **Name**: `deposito-db` (o el que prefieras).
+   * **Database Password**: Escribe una contraseña fuerte y **guárdala muy bien**, la necesitarás para la conexión.
+   * **Region**: Selecciona la región más cercana a tus usuarios (ej. `South America (São Paulo)` para Sudamérica, o `East US` / `West US`).
+4. Haz clic en **Create new project** y espera unos minutos a que la base de datos termine de crearse.
+
+### Paso 2: Obtener la URI de conexión (Connection String)
+1. En el menú lateral izquierdo de tu proyecto en Supabase, haz clic en el icono de engranaje (**Project Settings**).
+2. Ve a la sección **Database** (Base de datos).
+3. Desplázate hacia abajo hasta la sección **Connection string** (Cadena de conexión) y selecciona la pestaña **URI**.
+4. Copia la dirección que te muestra. Tendrá una estructura similar a esta:
+   ```text
+   postgresql://postgres.[ID_DE_TU_PROYECTO]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
+   ```
+5. Reemplaza `[YOUR-PASSWORD]` en la cadena de conexión con la contraseña que creaste en el **Paso 1**.
+
+### Paso 3: Configurar la variable en el servidor o entorno local
+
+#### A. Para uso Local (en tu computadora)
+1. En la raíz del proyecto, crea un archivo llamado `.env` (si no existe ya).
+2. Añade la variable `DATABASE_URL` con tu URI de conexión:
+   ```env
+   DATABASE_URL=postgresql://postgres.tu_id:tu_password_real@aws-0-tu_region.pooler.supabase.com:6543/postgres
+   ```
+3. Al iniciar la aplicación localmente (`run.py` o `python app.py`), el backend detectará automáticamente que estás usando PostgreSQL y se conectará a Supabase en lugar del archivo SQLite local.
+
+#### B. Para uso en Vercel
+1. Ve al panel de control de tu proyecto en **Vercel.com**.
+2. Dirígete a la pestaña **Settings** (Configuración) -> **Environment Variables** (Variables de entorno).
+3. Agrega una nueva variable:
+   * **Key**: `DATABASE_URL`
+   * **Value**: *(Pega la cadena de conexión de Supabase, asegurándote de haber reemplazado la contraseña)*
+4. Haz clic en **Save**.
+5. Ve a la pestaña **Deployments**, haz clic en los tres puntos de tu último despliegue y selecciona **Redeploy** (Redesplegar) para aplicar los cambios de variables de entorno.
+
+#### C. Para uso en Render
+1. Ve al panel de control de tu servicio en **Render.com**.
+2. Dirígete a la pestaña **Environment** (Entorno).
+3. Añade la variable `DATABASE_URL` con tu URI de conexión de Supabase.
+4. Guarda los cambios. (El servicio se reiniciará automáticamente aplicando la base de datos de Supabase).
+
+---
+
+### Nota sobre la Inicialización Automática
+Nuestra aplicación está configurada para inicializar la base de datos automáticamente al arrancar. Cuando conectes tu base de datos de Supabase por primera vez e inicies la app:
+1. Se crearán automáticamente las tablas: `productos`, `transacciones` y `usuarios`.
+2. Se registrará un usuario administrador inicial por defecto:
+   * **Usuario**: `admin`
+   * **Contraseña**: `admin123` (recuerda cambiar esta contraseña desde la configuración del perfil al iniciar sesión por primera vez).
+
+
 ¡Eso es todo! Vercel compilará la aplicación en unos segundos y te entregará una URL pública (ej. `https://deposito-stock.vercel.app`) para acceder desde cualquier dispositivo.

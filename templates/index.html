@@ -161,6 +161,10 @@
                         <!-- Categories dynamically loaded -->
                     </select>
                 </div>
+                <button class="btn btn-secondary btn-icon" id="btn-refresh-inventory" title="Actualizar inventario">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    <span>Actualizar</span>
+                </button>
                 <button class="btn btn-primary btn-icon" id="btn-open-add-product">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     <span>Nuevo Producto</span>
@@ -175,7 +179,7 @@
                             <th>Producto</th>
                             <th>Categoría</th>
                             <th style="text-align: right; width: 120px;">Stock</th>
-                            <th style="text-align: right; width: 120px;">Stock Mínimo</th>
+                            <th style="text-align: right; width: 115;">Stock Mínimo</th>
                             <th style="text-align: center; width: 150px;">Estado</th>
                             <th style="text-align: center; width: 110px;">Acciones</th>
                         </tr>
@@ -287,6 +291,10 @@
                         <option value="salida">Salidas (Despachos)</option>
                     </select>
                 </div>
+                <button class="btn btn-secondary btn-icon" id="btn-refresh-history" title="Actualizar historial">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    <span>Actualizar</span>
+                </button>
             </div>
 
             <div class="table-container card-panel">
@@ -311,32 +319,89 @@
 
         <!-- SECTION: REPORTES -->
         <section id="section-reportes" class="page-section">
-            <div class="report-cards-grid">
-                <!-- PDF Report Card -->
-                <div class="card-panel report-card hover-glow">
-                    <div class="report-header">
-                        <div class="report-icon bg-pdf">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 24px;">
+                
+                <!-- 1. Card: Stock Report -->
+                <div class="card-panel report-card-panel hover-glow" style="border: 1px solid var(--border-color); background-color: var(--bg-card); border-radius: var(--border-radius-md); padding: 24px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div class="report-icon bg-pdf" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background-color: rgba(99, 102, 241, 0.1); color: var(--color-indigo-600);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                         </div>
-                        <h3>Reporte Ejecutivo en PDF</h3>
+                        <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Reporte de Stock de Depósito</h3>
                     </div>
-                    <p>Genera un documento formateado no-editable de alta calidad para presentación ejecutiva o impresión física del estado actual de stock y el registro de los últimos 30 movimientos.</p>
-                    <div class="report-badge">Listo para imprimir</div>
-                    <a href="/api/reportes/pdf" class="btn btn-pdf btn-block">Descargar PDF</a>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">Genera un reporte del estado de inventario del depósito. Muestra los productos registrados, sus categorías, el stock disponible y su estado actual (suficiente, bajo stock o sin stock).</p>
+                    
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button id="btn-download-stock-pdf" class="btn btn-pdf" style="padding: 10px 20px; border-radius: var(--border-radius-sm); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; border: none;">
+                            Descargar PDF
+                        </button>
+                        <button id="btn-download-stock-excel" class="btn btn-excel" style="padding: 10px 20px; border-radius: var(--border-radius-sm); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; border: none;">
+                            Descargar Excel
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Excel Report Card -->
-                <div class="card-panel report-card hover-glow">
-                    <div class="report-header">
-                        <div class="report-icon bg-excel">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <!-- 2. Card: Movements Report -->
+                <div class="card-panel report-card-panel hover-glow" style="border: 1px solid var(--border-color); background-color: var(--bg-card); border-radius: var(--border-radius-md); padding: 24px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div class="report-icon bg-excel" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background-color: rgba(16, 185, 129, 0.1); color: var(--color-emerald-600);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M4 4l17 17"/></svg>
                         </div>
-                        <h3>Hoja de Cálculo Excel</h3>
+                        <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0;">Reporte de Movimientos de Depósito (Entrada/Salida)</h3>
                     </div>
-                    <p>Obtén una planilla de cálculo interactiva y editable (.xlsx) con dos pestañas organizadas ("Stock Actual" y "Movimientos Completos"). Ideal para auditorías y análisis avanzados.</p>
-                    <div class="report-badge text-emerald">Editable y dinámico</div>
-                    <a href="/api/reportes/excel" class="btn btn-excel btn-block">Descargar Excel</a>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">Genera un historial detallado de los movimientos registrados de entrada y salida. Puedes aplicar los filtros de abajo para limitar la búsqueda por producto, áreas específicas o un rango de fechas.</p>
+                    
+                    <!-- Filters inside movements card -->
+                    <div style="margin-bottom: 20px; border: 1px solid var(--border-color); background-color: var(--bg-app); border-radius: var(--border-radius-sm); padding: 16px;">
+                        <h4 style="margin-bottom: 12px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 600;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                            Filtros de Búsqueda (Opcionales)
+                        </h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rep-filter-product" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Producto</label>
+                                <select id="rep-filter-product" class="form-control" style="width: 100%; border: 1px solid var(--border-color); padding: 8px; border-radius: var(--border-radius-sm); background-color: var(--bg-card); color: var(--text-primary); outline: none; font-size: 0.85rem;">
+                                    <option value="">Todos los productos</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rep-filter-area" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Área de Destino</label>
+                                <select id="rep-filter-area" class="form-control" style="width: 100%; border: 1px solid var(--border-color); padding: 8px; border-radius: var(--border-radius-sm); background-color: var(--bg-card); color: var(--text-primary); outline: none; font-size: 0.85rem;">
+                                    <option value="">Todas las áreas</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rep-filter-type" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Tipo de Movimiento</label>
+                                <select id="rep-filter-type" class="form-control" style="width: 100%; border: 1px solid var(--border-color); padding: 8px; border-radius: var(--border-radius-sm); background-color: var(--bg-card); color: var(--text-primary); outline: none; font-size: 0.85rem;">
+                                    <option value="">Todos los movimientos</option>
+                                    <option value="entrada">Solo Entradas (Ingresos)</option>
+                                    <option value="salida">Solo Salidas (Egresos)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rep-filter-date-start" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Desde</label>
+                                <input type="date" id="rep-filter-date-start" class="form-control" style="width: 100%; border: 1px solid var(--border-color); padding: 6px; border-radius: var(--border-radius-sm); background-color: var(--bg-card); color: var(--text-primary); outline: none; box-sizing: border-box; height: 36px; font-size: 0.85rem;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rep-filter-date-end" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Hasta</label>
+                                <input type="date" id="rep-filter-date-end" class="form-control" style="width: 100%; border: 1px solid var(--border-color); padding: 6px; border-radius: var(--border-radius-sm); background-color: var(--bg-card); color: var(--text-primary); outline: none; box-sizing: border-box; height: 36px; font-size: 0.85rem;">
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
+                            <button id="btn-clear-rep-filters" class="btn btn-outline" style="padding: 6px 12px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); cursor: pointer; background: transparent; color: var(--text-primary); transition: var(--transition-fast); font-size: 0.8rem;">Limpiar Filtros</button>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button id="btn-download-movs-pdf" class="btn btn-pdf" style="padding: 10px 20px; border-radius: var(--border-radius-sm); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; border: none;">
+                            Descargar PDF
+                        </button>
+                        <button id="btn-download-movs-excel" class="btn btn-excel" style="padding: 10px 20px; border-radius: var(--border-radius-sm); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; border: none;">
+                            Descargar Excel
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </section>
     </main>

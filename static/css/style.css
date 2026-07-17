@@ -599,6 +599,16 @@ body.light-theme .sun-icon {
     box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
 }
 
+.btn-secondary {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+.btn-secondary:hover {
+    background-color: var(--bg-card-hover);
+    border-color: var(--border-focus);
+}
+
 .btn-block {
     width: 100%;
 }
@@ -634,6 +644,10 @@ body.light-theme .sun-icon {
     font-size: 0.95rem;
     outline: none;
     transition: all var(--transition-fast);
+}
+
+.form-group .search-box-container input[type="text"] {
+    padding-left: 44px;
 }
 
 .search-box-container input:focus {
@@ -769,6 +783,7 @@ body.light-theme .sun-icon {
 .form-group input[type="text"],
 .form-group input[type="number"],
 .form-group input[type="password"] {
+    width: 100%;
     padding: 12px 16px;
     background-color: var(--bg-input);
     border: 1px solid var(--border-color);

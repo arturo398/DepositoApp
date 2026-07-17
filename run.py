@@ -59,39 +59,31 @@ def main():
     workspace_dir = os.path.dirname(os.path.abspath(__file__))
     python_path = setup_venv()
     
-    app_path = os.path.join(workspace_dir, 'app.py')
-    if not os.path.exists(app_path):
-        print(f"Error: No se encontró el archivo principal '{app_path}'")
+    desktop_path = os.path.join(workspace_dir, 'desktop.py')
+    if not os.path.exists(desktop_path):
+        print(f"Error: No se encontró el archivo de escritorio '{desktop_path}'")
         sys.exit(1)
         
-    local_ip = get_local_ip()
-    
     print("\n" + "="*60)
-    print("  >>> INICIANDO EL SERVIDOR DEL DEPÓSITO <<<")
-    print(f"  > Acceso en esta PC:   http://localhost:5000")
-    print(f"  > Acceso desde otra PC: http://{local_ip}:5000")
-    print("  En unos segundos se abrirá tu navegador automáticamente.")
-    print("  Para cerrar el programa, cierra esta ventana o presiona Ctrl+C.")
+    print("  >>> INICIANDO EL DEPÓSITO INTELIGENTE <<<")
+    print("  Se abrirá una ventana de aplicación en unos segundos.")
+    print("  Para cerrar el programa, simplemente cierra la ventana de la aplicación.")
     print("="*60 + "\n")
     
-    # Run the Flask app as a subprocess
+    # Run the desktop app as a subprocess
     process = None
     try:
-        # Start server
-        process = subprocess.Popen([python_path, app_path], cwd=workspace_dir)
+        # Start desktop application
+        process = subprocess.Popen([python_path, desktop_path], cwd=workspace_dir)
         
-        # Wait for server to start, then open browser
-        time.sleep(2.0)
-        webbrowser.open('http://localhost:5000')
-        
-        # Wait for the subprocess to finish (runs indefinitely until killed)
+        # Wait for the subprocess to finish (runs indefinitely until closed)
         process.wait()
     except KeyboardInterrupt:
-        print("\n>>> Apagando el servidor...")
+        print("\n>>> Cerrando la aplicación...")
         if process:
             process.terminate()
             process.wait()
-        print(">>> Servidor detenido. ¡Hasta luego!")
+        print(">>> Aplicación detenida. ¡Hasta luego!")
     except Exception as e:
         print(f"Ocurrió un error al ejecutar la aplicación: {e}")
         if process:

@@ -17,10 +17,19 @@ from backend.db import (
 )
 from backend.reports import generate_excel_report, generate_pdf_report
 
+import sys
+
+if getattr(sys, 'frozen', False):
+    template_folder = os.path.join(sys._MEIPASS, 'templates')
+    static_folder = os.path.join(sys._MEIPASS, 'static')
+else:
+    template_folder = 'templates'
+    static_folder = 'static'
+
 app = Flask(
     __name__,
-    template_folder='templates',
-    static_folder='static'
+    template_folder=template_folder,
+    static_folder=static_folder
 )
 
 # Clave secreta para firmar las cookies de sesión
@@ -149,17 +158,24 @@ def api_crear_producto():
         return jsonify({'error': 'Las cantidades deben ser números enteros no negativos.'}), 400
         
     try:
-        producto_id = crear_producto(
+        producto_id, creado = crear_producto(
             nombre=nombre,
             categoria=categoria,
             cantidad_inicial=cantidad_inicial,
             stock_minimo=stock_minimo
         )
+        
+        if creado:
+            message = 'Producto creado con éxito.'
+        else:
+            message = f'El producto "{nombre}" ya existe en el depósito. Se sumaron {cantidad_inicial} unidades a su stock.'
+            
         return jsonify({
             'success': True,
-            'message': 'Producto creado con éxito.',
-            'producto_id': producto_id
-        }), 201
+            'message': message,
+            'producto_id': producto_id,
+            'creado': creado
+        }), 201 if creado else 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -236,12 +252,33 @@ def api_get_transacciones():
 @app.route('/api/reportes/excel', methods=['GET'])
 def download_excel_report():
     try:
+        producto_id = request.args.get('producto_id')
+        area = request.args.get('area')
+        fecha_inicio = request.args.get('fecha_inicio')
+        fecha_fin = request.args.get('fecha_fin')
+        tipo = request.args.get('tipo', 'completo')
+        tipo_movimiento = request.args.get('tipo_movimiento')
+        
+        if producto_id == '' or producto_id == 'null': producto_id = None
+        if area == '' or area == 'null': area = None
+        if fecha_inicio == '': fecha_inicio = None
+        if fecha_fin == '': fecha_fin = None
+        if tipo_movimiento == '' or tipo_movimiento == 'null': tipo_movimiento = None
+        
         # Create temp file
         temp_dir = tempfile.gettempdir()
         filename = f"reporte_deposito_{os.urandom(4).hex()}.xlsx"
         filepath = os.path.join(temp_dir, filename)
         
-        generate_excel_report(filepath)
+        generate_excel_report(
+            filepath,
+            producto_id=producto_id,
+            area=area,
+            fecha_inicio=fecha_inicio,
+            fecha_fin=fecha_fin,
+            tipo=tipo,
+            tipo_movimiento=tipo_movimiento
+        )
         
         return send_file(
             filepath,
@@ -255,12 +292,33 @@ def download_excel_report():
 @app.route('/api/reportes/pdf', methods=['GET'])
 def download_pdf_report():
     try:
+        producto_id = request.args.get('producto_id')
+        area = request.args.get('area')
+        fecha_inicio = request.args.get('fecha_inicio')
+        fecha_fin = request.args.get('fecha_fin')
+        tipo = request.args.get('tipo', 'completo')
+        tipo_movimiento = request.args.get('tipo_movimiento')
+        
+        if producto_id == '' or producto_id == 'null': producto_id = None
+        if area == '' or area == 'null': area = None
+        if fecha_inicio == '': fecha_inicio = None
+        if fecha_fin == '': fecha_fin = None
+        if tipo_movimiento == '' or tipo_movimiento == 'null': tipo_movimiento = None
+        
         # Create temp file
         temp_dir = tempfile.gettempdir()
         filename = f"reporte_deposito_{os.urandom(4).hex()}.pdf"
         filepath = os.path.join(temp_dir, filename)
         
-        generate_pdf_report(filepath)
+        generate_pdf_report(
+            filepath,
+            producto_id=producto_id,
+            area=area,
+            fecha_inicio=fecha_inicio,
+            fecha_fin=fecha_fin,
+            tipo=tipo,
+            tipo_movimiento=tipo_movimiento
+        )
         
         return send_file(
             filepath,

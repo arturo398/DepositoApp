@@ -6,3 +6,4 @@ __pycache__/
 database.db
 .DS_Store
 Thumbs.db
+.env
