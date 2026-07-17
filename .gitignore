@@ -7,3 +7,5 @@ database.db
 .DS_Store
 Thumbs.db
 .env
+build/
+dist/
